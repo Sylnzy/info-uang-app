@@ -1,6 +1,6 @@
 # fisrt_project
 
-A new Flutter project.
+A Money Management app 
 
 ## Getting Started
 
