@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1050007373901",
+    "project_id": "info-uang",
+    "storage_bucket": "info-uang.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050007373901:android:e88c26f54bf34c21457404",
+        "android_client_info": {
+          "package_name": "com.example.fisrt_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKQoN7HpsF6_sKp2TtSpv5xEjuEacltpg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
