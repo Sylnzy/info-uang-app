@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'main_screen.dart';
+
+import 'main.dart';
+import 'services/auth_service.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,26 +16,30 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final String _validUsername = 'admin';
+  final String _validUsername = 'maul';
   final String _validPassword = '1234';
 
   Future<void> _login() async {
-    final username = _usernameController.text.trim();
-    final password = _passwordController.text.trim();
+  final username = _usernameController.text.trim();
+  final password = _passwordController.text.trim();
 
-    if (username == _validUsername && password == _validPassword) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('username', username);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Username atau password salah')),
-      );
-    }
+  if (username == _validUsername && password == _validPassword) {
+    await AuthService.login(username);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MainScreen(
+          onToggleTheme: (_) {},
+          isDarkMode: false,
+        ),
+      ),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Username atau password salah')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
