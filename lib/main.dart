@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'login_screen.dart';
 import 'main_screen.dart';
 import 'auth_wrapper.dart';
-
+import 'services/auth_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,10 +51,10 @@ class _InfoUangAppState extends State<InfoUangApp> {
         useMaterial3: true,
       ),
       themeMode: _themeMode,
-      home: AuthWrapper(
-  isDarkMode: _themeMode == ThemeMode.dark,
-  onToggleTheme: _toggleTheme,
-),
+      home: MainScreen(
+        onToggleTheme: _toggleTheme,
+        isDarkMode: _themeMode == ThemeMode.dark,
+      ),
     );
   }
 }
@@ -103,17 +103,16 @@ class Transaction {
   }
 }
 
-/// pergi ke [main_screen.dart]
+// ke main_screen.dart
 class MainScreen extends StatefulWidget {
-  final bool isDarkMode;
   final Function(bool) onToggleTheme;
+  final bool isDarkMode;
 
   const MainScreen({
-    Key? key,
-    required this.isDarkMode,
+    super.key,
     required this.onToggleTheme,
-  }) : super(key: key);
-
+    required this.isDarkMode,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -211,6 +210,16 @@ class _MainScreenState extends State<MainScreen> {
               ));
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await AuthService.logout();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+            },
+          )
         ],
       ),
       body: currentScreen,
