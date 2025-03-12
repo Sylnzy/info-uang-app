@@ -13,8 +13,21 @@ Future<void> main() async {
   runApp(const InfoUangApp());
 }
 
-class InfoUangApp extends StatelessWidget {
+class InfoUangApp extends StatefulWidget {
   const InfoUangApp({super.key});
+
+  @override
+  State<InfoUangApp> createState() => _InfoUangAppState();
+}
+
+class _InfoUangAppState extends State<InfoUangApp> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void _toggleTheme(bool isDark) {
+    setState(() {
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +36,22 @@ class InfoUangApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
+        brightness: Brightness.light,
       ),
-      home: const SplashScreen(),
-
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: const ColorScheme.dark(),
+        useMaterial3: true,
+      ),
+      themeMode: _themeMode,
+      home: MainScreen(
+        onToggleTheme: _toggleTheme,
+        isDarkMode: _themeMode == ThemeMode.dark,
+      ),
     );
   }
 }
+
 
 class Transaction {
   final String? id;
@@ -73,9 +96,16 @@ class Transaction {
     };
   }
 }
-
+/// pergi ke [main_screen.dart]
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final Function(bool) onToggleTheme;
+  final bool isDarkMode;
+
+  const MainScreen({
+    super.key,
+    required this.onToggleTheme,
+    required this.isDarkMode,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -161,6 +191,19 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Info Uang'),
+        actions: [
+          Row(
+            children: [
+              Text(widget.isDarkMode ? 'Dark' : 'Light'),
+              Switch(
+                value: widget.isDarkMode,
+                onChanged: (value) {
+                  widget.onToggleTheme(value);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
       body: currentScreen,
       bottomNavigationBar: BottomNavigationBar(
@@ -398,8 +441,7 @@ class TransactionList extends StatelessWidget {
 }
 
 class AddTransactionScreen extends StatefulWidget {
-  final Function(String, double, DateTime, String, double, double)
-      addTransaction;
+  final Function(String, double, DateTime, String, double, double) addTransaction;
 
   const AddTransactionScreen(this.addTransaction, {super.key});
 
@@ -543,8 +585,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   children: [
                     const Text(
                       'Total: ',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'Rp ${_totalAmount.toStringAsFixed(0)}',
@@ -573,13 +614,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       value: 'Transportation', child: Text('Transportation')),
                   DropdownMenuItem(value: 'Bills', child: Text('Bills')),
                   DropdownMenuItem(
-                      value: 'Entertainment',
-                      child: Text('Entertainment')), // Kategori baru
-                  DropdownMenuItem(
-                      value: 'Health', child: Text('Health')), // Kategori baru
-                  DropdownMenuItem(
-                      value: 'Education',
-                      child: Text('Education')), // Kategori baru
+                      value: 'Entertainment', child: Text('Entertainment')),
+                  DropdownMenuItem(value: 'Health', child: Text('Health')),
+                  DropdownMenuItem(value: 'Education', child: Text('Education')),
                 ],
               ),
               Row(
