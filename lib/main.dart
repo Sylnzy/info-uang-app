@@ -5,6 +5,13 @@ import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'splash_screen.dart';
 
+import 'settings_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'login_screen.dart';
+import 'main_screen.dart';
+import 'auth_wrapper.dart';
+
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -44,14 +51,13 @@ class _InfoUangAppState extends State<InfoUangApp> {
         useMaterial3: true,
       ),
       themeMode: _themeMode,
-      home: MainScreen(
-        onToggleTheme: _toggleTheme,
-        isDarkMode: _themeMode == ThemeMode.dark,
-      ),
+      home: AuthWrapper(
+  isDarkMode: _themeMode == ThemeMode.dark,
+  onToggleTheme: _toggleTheme,
+),
     );
   }
 }
-
 
 class Transaction {
   final String? id;
@@ -96,16 +102,18 @@ class Transaction {
     };
   }
 }
+
 /// pergi ke [main_screen.dart]
 class MainScreen extends StatefulWidget {
-  final Function(bool) onToggleTheme;
   final bool isDarkMode;
+  final Function(bool) onToggleTheme;
 
   const MainScreen({
-    super.key,
-    required this.onToggleTheme,
+    Key? key,
     required this.isDarkMode,
-  });
+    required this.onToggleTheme,
+  }) : super(key: key);
+
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -192,16 +200,16 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: const Text('Info Uang'),
         actions: [
-          Row(
-            children: [
-              Text(widget.isDarkMode ? 'Dark' : 'Light'),
-              Switch(
-                value: widget.isDarkMode,
-                onChanged: (value) {
-                  widget.onToggleTheme(value);
-                },
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => SettingsScreen(
+                  isDarkMode: widget.isDarkMode,
+                  onToggleDarkMode: widget.onToggleTheme,
+                ),
+              ));
+            },
           ),
         ],
       ),
@@ -441,7 +449,8 @@ class TransactionList extends StatelessWidget {
 }
 
 class AddTransactionScreen extends StatefulWidget {
-  final Function(String, double, DateTime, String, double, double) addTransaction;
+  final Function(String, double, DateTime, String, double, double)
+      addTransaction;
 
   const AddTransactionScreen(this.addTransaction, {super.key});
 
@@ -585,7 +594,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   children: [
                     const Text(
                       'Total: ',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'Rp ${_totalAmount.toStringAsFixed(0)}',
@@ -616,7 +626,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   DropdownMenuItem(
                       value: 'Entertainment', child: Text('Entertainment')),
                   DropdownMenuItem(value: 'Health', child: Text('Health')),
-                  DropdownMenuItem(value: 'Education', child: Text('Education')),
+                  DropdownMenuItem(
+                      value: 'Education', child: Text('Education')),
                 ],
               ),
               Row(
